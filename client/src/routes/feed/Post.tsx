@@ -120,7 +120,7 @@ export default function Post({
       style={{
         opacity: isDeleted ? 0.4 : 1,
         pointerEvents: isDeleted ? "none" : "unset",
-        backgroundColor: highlight ? "rgba(255,255,255,0.1)" : "transparent",
+        // backgroundColor: highlight ? "rgba(255,255,255,0.1)" : "transparent",
       }}
       className="relative flex w-full max-w-[600px] cursor-pointer flex-col items-start gap-3 pt-4 [transition:opacity_0.2s] "
     >

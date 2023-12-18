@@ -58,7 +58,7 @@ app.post("/api/upload", { preHandler: app.verifyJwt }, async (req, res) => {
     return filename;
   } catch (error) {
     console.log(error);
-    return "hey";
+    return res.status(500).send(error);
   }
 });
 

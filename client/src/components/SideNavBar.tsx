@@ -22,7 +22,6 @@ export default function SideNavBar({ user }: { user: AppUser }) {
   return (
     <>
       {showSearch && <SearchUsers hide={() => setShowSearch(false)} />}
-
       <div
         className="fixed top-0 z-10 flex h-full min-w-[300px] flex-col justify-end gap-6 border-transparent border-r-border_s bg-transparent p-5 
     pt-[60px]"
@@ -41,13 +40,15 @@ export default function SideNavBar({ user }: { user: AppUser }) {
             }
           </NavLink>
 
-          <NavItem
-            title="Profile"
-            onClick={() => {}}
-            icon={
-              <Avatar imgUrl={publicUri(user.profilePictureUrl)} size="sm" />
-            }
-          />
+          <NavLink to={`/${user.username}`}>
+            <NavItem
+              title="Profile"
+              onClick={() => {}}
+              icon={
+                <Avatar imgUrl={publicUri(user.profilePictureUrl)} size="sm" />
+              }
+            />
+          </NavLink>
 
           <NavItem
             title="Notifications"
@@ -61,12 +62,6 @@ export default function SideNavBar({ user }: { user: AppUser }) {
             onClick={() => setShowSearch(true)}
           />
 
-          {/* <NavItem
-            title="Search"
-            icon={<AddRoundedIcon />}
-            // variant="white"
-            onClick={() => setShowSearch(true)}
-          /> */}
         </div>
 
         {/* <div className="group flex cursor-pointer select-none items-center rounded-xl bg-white bg-opacity-[%] px-1 py-3 [transition:box-shadow_0.2s,border_0.2s,background_0.2s]">
@@ -74,7 +69,7 @@ export default function SideNavBar({ user }: { user: AppUser }) {
             <span className="ml-3 font-bold opacity-70">Log out</span>
           </div> */}
 
-        {/* <CreateButton /> */}
+        <CreateButton />
       </div>
     </>
   );
@@ -91,7 +86,7 @@ const NavItem = ({
 }) => {
   return (
     <div
-      // onClick={onClick}
+      onClick={onClick}
       className="group relative flex h-[60px] w-[60px] cursor-pointer select-none items-center justify-center rounded-2xl  [transition:transform_0.2s] active:scale-[90%]"
     >
       <div className="absolute h-full w-full scale-[85%] rounded-lg bg-white bg-opacity-10 opacity-0 [transition:opacity_0.2s,transform_0.2s] group-hover:scale-100 group-hover:opacity-100"></div>
@@ -117,7 +112,7 @@ export const showModalButtonTransition = (
   modalContainer.style.opacity = "0";
 
   btn.style.opacity = "1";
-  btn.style.position = "absolute";
+  btn.style.position = "fixed";
   setClientPos(btn, btnPosBefore);
 
   window.requestAnimationFrame(() => {
@@ -136,17 +131,18 @@ export const hideModalButtonTransition = (
 ) => {
   const btn = document.getElementById("post-btn");
   const modalBtn = document.getElementById("post-modal-btn");
-  console.log("hiding handler");
   if (!btn || !modalBtn) {
     return;
   }
 
   btn.style.position = "unset";
   resetClientPos(btn);
+  btn.style.maxWidth = "60px";
+  btn.style.minHeight = "60px";
 
   const ogBtnPos = getClientPos(btn);
   setClientPos(btn, getClientPos(modalBtn));
-  btn.style.position = "absolute";
+  btn.style.position = "fixed";
 
   setClientPos(modal, getClientPos(modal));
 
@@ -166,27 +162,30 @@ const CreateButton = () => {
   const { setStatusData } = useContext(StatusPopupContext);
 
   return (
-    <div
-      style={{
-        zIndex: 10,
-        transition: `opacity 0.5s ${timingFunction}, height 0.5s ${timingFunction}, width 0.5s ${timingFunction}, left 0.5s ${timingFunction}, top 0.5s ${timingFunction}, visibility 0.5s ${timingFunction}, transform 0.2s ${timingFunction}`,
-      }}
-      onClick={() =>
-        postModal.show({
-          showHandler: showModalButtonTransition,
-          hideHandler: hideModalButtonTransition,
-          postReqHander: (data) => {
-            setFeed([data, ...feed]);
-            setStatusData({
-              title: "Post was created",
-              isSuccess: true,
-            });
-          },
-        })
-      }
-      id="post-btn"
-    >
-      <AddRoundedIcon />
+    <div className="relative h-[60px] w-[60px] cursor-pointer">
+      <div
+        className="flex items-center justify-center h-[60px] w-[60px] bg-white rounded-lg text-black"
+        style={{
+          zIndex: 10,
+          transition: `opacity 0.5s ${timingFunction}, height 0.5s ${timingFunction}, width 0.5s ${timingFunction}, left 0.5s ${timingFunction}, top 0.5s ${timingFunction}, visibility 0.5s ${timingFunction}, transform 0.2s ${timingFunction}`,
+        }}
+        onClick={() =>
+          postModal.show({
+            showHandler: showModalButtonTransition,
+            hideHandler: hideModalButtonTransition,
+            postReqHander: (data) => {
+              setFeed([data, ...feed]);
+              setStatusData({
+                title: "Post was created",
+                isSuccess: true,
+              });
+            },
+          })
+        }
+        id="post-btn"
+        >
+        <AddRoundedIcon sx={{fontSize:30}}/>
+      </div>
     </div>
   );
 };

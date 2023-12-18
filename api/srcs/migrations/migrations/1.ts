@@ -12,12 +12,35 @@ export async function up(db: Kysely<any>): Promise<void> {
       col.defaultTo(sql`now()`).notNull()
     )
     .execute();
+/////
+
+await db.schema
+.createTable("post")
+.addColumn("id", "serial", (col) => col.primaryKey())
+.addColumn("caption", "text")
+.addColumn("photoUrl", "varchar")
+.addColumn("authorId", "integer", (col) =>
+  col.references("user.id").onDelete("cascade").notNull()
+)
+.addColumn("createdAt", "timestamp", (col) =>
+  col.defaultTo(sql`now()`).notNull()
+)
+.addColumn("updatedAt", "timestamp", (col) =>
+  col.defaultTo(sql`now()`).notNull()
+)
+.addColumn("replyTargetId", "integer", (col) =>
+col.references("post.id").onDelete("cascade")
+)
+.addColumn("replySourceTargetId", "integer", (col) =>
+    col.references("post.id").onDelete("cascade")
+)
+.execute();
 
   // remove primary key
   await db.schema
     .createTable("following")
     .addColumn("sourceId", "integer", (col) =>
-      col.references("user.id").onDelete("cascade").notNull().primaryKey()
+      col.references("user.id").onDelete("cascade").notNull()
     )
     .addColumn("targetId", "integer", (col) =>
       col.references("user.id").onDelete("cascade").notNull()
@@ -26,60 +49,56 @@ export async function up(db: Kysely<any>): Promise<void> {
       col.defaultTo(sql`now()`).notNull()
     )
     .execute();
+/////
 
-  // make caption optional
-  // add replyTargetId & sourceReplyTargetId
-  await db.schema
-    .createTable("post")
-    .addColumn("id", "serial", (col) => col.primaryKey())
-    .addColumn("caption", "text", (col) => col.notNull())
-    .addColumn("photoUrl", "varchar")
-    .addColumn("authorId", "integer", (col) =>
-      col.references("user.id").onDelete("cascade").notNull()
-    )
-    .addColumn("createdAt", "timestamp", (col) =>
-      col.defaultTo(sql`now()`).notNull()
-    )
-    .addColumn("updatedAt", "timestamp", (col) =>
-      col.defaultTo(sql`now()`).notNull()
-    )
-    .execute();
-
-  // remove primary key
-  await db.schema
+    await db.schema
     .createTable("like")
     .addColumn("postId", "integer", (col) =>
-      col.references("post.id").onDelete("cascade").notNull().primaryKey()
+    col.references("post.id").onDelete("cascade").notNull()
     )
     .addColumn("userId", "integer", (col) =>
-      col.references("user.id").onDelete("cascade").notNull()
+    col.references("user.id").onDelete("cascade").notNull()
     )
     .addColumn("createdAt", "timestamp", (col) =>
-      col.defaultTo(sql`now()`).notNull()
+    col.defaultTo(sql`now()`).notNull()
     )
     .execute();
 
-  // create id row
-  // postId ref -> post.id not user.id
-  await db.schema
-    .createTable("comment")
-    .addColumn("content", "text")
+
+    await db.schema
+    .createTable("thread")
+    .addColumn("id", "integer", (col) =>
+      col.references("post.id").onDelete("cascade").notNull().primaryKey()
+    )
+    .addColumn("postIds", sql`integer[]`, (col) => col.notNull())
     .addColumn("authorId", "integer", (col) =>
-      col.references("user.id").onDelete("cascade").notNull()
-    )
-    .addColumn("postId", "integer", (col) =>
-      col.references("user.id").onDelete("cascade").notNull()
-    )
-    .addColumn("createdAt", "timestamp", (col) =>
-      col.defaultTo(sql`now()`).notNull()
-    )
-    .addColumn("updatedAt", "timestamp", (col) =>
-      col.defaultTo(sql`now()`).notNull()
+      col.references("user.id").notNull().onDelete("cascade")
     )
     .execute();
 
-  // add followingSourceIdIndex
-  // add likePostIdIndex
+  await db.schema
+    .createIndex("likePostIdIndex")
+    .on("like")
+    .column("postId")
+    .execute();
+
+    await db.schema
+    .createIndex("replyTargetIdIndex")
+    .on("post")
+    .column("replyTargetId")
+    .execute();
+
+    await db.schema
+    .createIndex("replySourceTargetIdIndex")
+    .on("post")
+    .column("replySourceTargetId")
+    .execute();
+
+  await db.schema
+    .createIndex("threadAuthorIdIndex")
+    .on("thread")
+    .column("authorId")
+    .execute();
 
   await db.schema
     .createIndex("postAuthorIdIndex")
@@ -88,15 +107,15 @@ export async function up(db: Kysely<any>): Promise<void> {
     .execute();
 
   await db.schema
-    .createIndex("likeUserIdIndex")
-    .on("like")
-    .column("userId")
-    .execute();
-
-  await db.schema
     .createIndex("followingTargetIdIndex")
     .on("following")
     .column("targetId")
+    .execute();
+
+  await db.schema
+    .createIndex("likeUserIdIndex")
+    .on("like")
+    .column("userId")
     .execute();
 }
 

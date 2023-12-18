@@ -24,17 +24,20 @@ export default function Feed() {
     },
   });
 
-  // if (isError) {
-  //   setStatusData({
-  //     title: "Some error occured",
-  //     isSuccess: false,
-  //   });
-  //   return null;
-  // }
-
   if (!feed) {
     return null;
   }
+
+  if (feed.length == 0) {
+    return (
+      <div className="flex flex-1 items-center justify-center h-full">
+        <h1 className="text-3xl font-extrabold">
+          Time to follow some people!
+        </h1>
+      </div>
+    );
+  }
+
 
   return (
     <div
@@ -48,7 +51,7 @@ export default function Feed() {
           }}
           className="divid flex w-[600px] min-w-[600px] flex-col gap-4 divide-y-[1px] divide-white divide-opacity-10 self-start text-left"
         >
-          {feed?.map((post) => {
+          {feed.map((post) => {
             return <Post key={post.id} post={post} />;
           })}
         </div>

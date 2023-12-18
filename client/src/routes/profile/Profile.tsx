@@ -42,7 +42,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="flex w-full flex-col items-center gap-5 pb-5">
+    <div className="flex w-full flex-col items-center gap-5 py-[55px] pt-[60px]">
       <div className="flex w-[600px] flex-col gap-10">
         <Header data={data} />
         {data.id == user.id ? (
@@ -115,7 +115,7 @@ const CurrUserProfile = ({ data }: { data: AppProfile }) => {
       </div>
 
       <div className="flex flex-1 gap-2">
-        <Link to={`${user.username}/edit`} className="flex w-full">
+        <Link to={`/${user.username}/edit`} className="flex w-full">
           <Button style={{ flex: 1, borderRadius: 10 }} variant="monochrome">
             Edit
           </Button>

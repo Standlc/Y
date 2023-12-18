@@ -19,42 +19,53 @@ export default function ({ user }: { user: AppUser }) {
   const [file, setFile] = useState<File | undefined>(undefined);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  const postQuery = useMakeRequest(
-    ["createPost", newPost.caption, newPost.photoUrl, file],
-    async () => {
+  const uploadImage = async () => {
+      if (!file) {
+        return null;
+      }
+
+      const data = new FormData();
+      data.append("file", file);
+      try {
+        const res = await axios.post<string>("/api/upload", data);
+        return res.data;
+      } catch (error) {
+        console.log(error);
+      }
+  };
+
+  const postNewPost = async () => {
       if (newPost.caption == "" && !file) {
         return null;
       }
 
       if (file) {
-        newPost.photoUrl = await uploadImgFile();
+        const res = await uploadImage();
+        newPost.photoUrl = res;
       }
 
-      let res;
-      if (modal.targetId != undefined) {
-        const newReply: NewReply = {
-          ...newPost,
-          replyTargetId: modal.targetId,
-        };
-        console.log(modal.targetId);
-        res = await axios.post(`/api/reply`, newReply);
-      } else {
-        res = await axios.post("/api/posts", newPost);
+      try {        
+        let res;
+        if (modal.targetId != undefined) {
+          const newReply: NewReply = {
+            ...newPost,
+            replyTargetId: modal.targetId,
+          };
+          res = await axios.post<AppPost>(`/api/reply`, newReply);
+        } else {
+          res = await axios.post<AppPost>("/api/posts", newPost);
+        }
+
+        modal.finish(res.data);
+        modal.hide();
+      } catch (error) {
+        console.log(error);
+        setStatusData({
+          title: "An error occured",
+          isSuccess: false,
+        });
       }
-
-      return res.data;
-    },
-  ) as UseQueryResult<AppPost | null, Error>;
-
-  const uploadImgFile = async () => {
-    if (!file) {
-      return;
-    }
-    const data = new FormData();
-    data.append("file", file);
-    const res = await axios.post("/api/upload", data);
-    return res.data;
-  };
+    };
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -75,26 +86,11 @@ export default function ({ user }: { user: AppUser }) {
       if (!e.metaKey || e.key !== "Enter") {
         return;
       }
-      postQuery.refetch();
+      postNewPost();
     };
     addEventListener("keydown", handler);
     return () => removeEventListener("keydown", handler);
   }, []);
-
-  useEffect(() => {
-    if (postQuery.isError) {
-      setStatusData({
-        title: "An error occured",
-        isSuccess: false,
-      });
-      modal.hide();
-    }
-    if (postQuery.isFetching || !postQuery.data) {
-      return;
-    }
-    modal.finish(postQuery.data);
-    modal.hide();
-  }, [postQuery.isFetching, postQuery.data, postQuery.isError]);
 
   return (
     <div
@@ -110,7 +106,7 @@ export default function ({ user }: { user: AppUser }) {
         style={{
           transition: `opacity 0.5s ${timingFunction}, height 0.5s ${timingFunction}, width 0.5s ${timingFunction}, left 0.5s ${timingFunction}, top 0.5s ${timingFunction}, transform 0.5s ${timingFunction}`,
         }}
-        className="absolute bottom-[50px] flex max-h-[calc(100%-100px)] w-[650px] flex-col gap-5 overflow-scroll rounded-3xl border border-[rgba(255,255,255,0.25)] bg-black bg-opacity-50 backdrop-blur-3xl will-change-auto [box-shadow:0_20px_100px_rgba(255,255,255,0.2),0_1px_10px_rgba(255,255,255,0.15)]"
+        className="absolute bottom-[50px] flex max-h-[calc(100%-100px)] w-[650px] flex-col gap-5 overflow-hidden rounded-3xl border border-[rgba(255,255,255,0.25)] bg-black bg-opacity-50 backdrop-blur-3xl will-change-auto [box-shadow:0_20px_100px_rgba(255,255,255,0.2),0_1px_10px_rgba(255,255,255,0.15)]"
       >
         <div id="post-dd" className="flex items-start gap-3 p-4">
           <div className="sticky top-4 flex items-start">
@@ -133,7 +129,7 @@ export default function ({ user }: { user: AppUser }) {
           <div className="sticky bottom-4 flex items-center gap-3 self-end p-[2px]">
             <ImageSelector setFile={setFile} />
             <Button
-              isLoading={postQuery.isFetching}
+              isLoading={false}
               id="post-modal-btn"
               variant="secondary"
               style={{
@@ -142,9 +138,7 @@ export default function ({ user }: { user: AppUser }) {
                 padding: "5px 30px 5px 30px",
                 border: "1px solid rgba(255,255,255,0.1)",
               }}
-              onClick={() => {
-                postQuery.refetch();
-              }}
+              onClick={postNewPost}
             >
               Post
             </Button>

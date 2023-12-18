@@ -27,7 +27,7 @@ export default function SubmitNewUser({
     }
     const res = await axios.post<AppUser>("/api/auth/register", unsignedUser);
     setUser(res.data);
-    return null;
+    return res.data;
   };
 
   const { refetch, isFetching } = useQuery({

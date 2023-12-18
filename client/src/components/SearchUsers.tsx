@@ -64,13 +64,16 @@ export default function SearchUsers({ hide }: { hide: () => void }) {
       className="fixed left-0 top-0 z-[100] flex h-full w-full animate-modalFadeIn items-start justify-center overflow-scroll bg-black bg-opacity-50 px-10 py-20 opacity-100 backdrop-blur-3xl"
     >
       <div
-        ref={wrapperRef}
-        style={{
-          transition: "transform 0.5s cubic-bezier(0.7, -0.0, 0, 1)",
-        }}
-        className="flex w-[600px] scale-100 flex-col justify-start gap-5"
+
+        className="flex w-[600px] flex-col justify-start gap-5"
       >
-        <div className="sticky top-0 flex animate-scalein items-center">
+        <div
+          ref={wrapperRef}
+          style={{
+            transition: "transform 0.5s cubic-bezier(0.7, -0.0, 0, 1)",
+          }}
+          className="sticky scale-100 top-0 flex animate-scalein items-center"
+        >
           <div className="absolute left-[25px] z-10">
             <SearchIcon size={15} />
           </div>
@@ -87,7 +90,7 @@ export default function SearchUsers({ hide }: { hide: () => void }) {
         {result && (
           <div className="flex w-full flex-col divide-y divide-white divide-opacity-10">
             {result?.map((user) => {
-              return <SearchResultItem user={user} />;
+              return <SearchResultItem user={user} key={user.id} />;
             })}
           </div>
         )}

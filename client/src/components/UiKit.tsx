@@ -113,16 +113,19 @@ const buttonDimensions = {
 const bgVariants = {
   primary: {
     bg: "bg-primary",
+    color: "text-black",
     hover:
       "hover:-translate-y-[1px] hover:scale-[100%] hover:shadow-shadow_hover active:scale-[97%]",
   },
   secondary: {
     bg: "bg-secondary",
+    color: "text-white",
     hover:
-      "hover:-translate-y-[1px] hover:scale-[100%] hover:bg-primary hover:shadow-shadow_hover active:scale-[97%]",
+      "hover:-translate-y-[1px] hover:scale-[100%] hover:shadow-shadow_hover active:scale-[97%]",
   },
   monochrome: {
     bg: "bg-white bg-opacity-10",
+    color: "text-white",
     hover:
       "hover:-translate-y-[1px] hover:scale-[100%] hover:bg-opacity-20 hover:shadow-shadow_hover active:scale-[97%]",
   },
@@ -157,12 +160,10 @@ export const Button = (
       {...ogButtonProps}
       style={{
         ...style,
-        // fontSize: `${dim.fontSize}px`,
-        // padding: `${dim.paddingY}px ${dim.paddingX}px  ${dim.paddingY}px  ${dim.paddingX}px`,
       }}
       className={`relative flex w-auto select-none flex-col items-center justify-center overflow-hidden rounded-xl text-lg font-extrabold text-black shadow-shadow duration-300 ease-in-out [transition:color_0.2s,transform_0.2s,box-shadow_0.2s,background-color_0.2s] ${
         isActive ? styles.hover : "opacity-50"
-      } ${styles.bg} px-5 py-2`}
+      } ${styles.bg} ${styles.color} px-5 py-2`}
       disabled={isLoading}
     >
       {children}
