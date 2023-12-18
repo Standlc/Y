@@ -27,6 +27,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     )
     .execute();
 
+  // make caption optional
+  // add replyTargetId & sourceReplyTargetId
   await db.schema
     .createTable("post")
     .addColumn("id", "serial", (col) => col.primaryKey())
@@ -58,6 +60,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .execute();
 
   // create id row
+  // postId ref -> post.id not user.id
   await db.schema
     .createTable("comment")
     .addColumn("content", "text")

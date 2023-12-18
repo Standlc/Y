@@ -14,6 +14,8 @@ import { fastifyStatic } from "@fastify/static";
 import path from "path";
 import replyRoutes from "./apiRoutes/reply";
 import likeRoutes from "./apiRoutes/like";
+import followingRoutes from "./apiRoutes/following";
+import threadRoutes from "./apiRoutes/thread";
 
 export const UPLOAD_PATH = __dirname + "/../upload/";
 
@@ -36,6 +38,8 @@ app.register(authRoutes, { prefix: "/api/auth" });
 app.register(usersRoutes, { prefix: "/api/users" });
 app.register(replyRoutes, { prefix: "/api/reply" });
 app.register(likeRoutes, { prefix: "/api/like" });
+app.register(followingRoutes, { prefix: "/api/following" });
+app.register(threadRoutes, { prefix: "/api/thread" });
 
 app.get("/", async (req, res) => {
   return res.status(200).send("Vu api is running");

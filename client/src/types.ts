@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { NewUser } from "~/srcs/types";
+import { AppUser, NewUser } from "~/srcs/types";
 
 export type loginUserType = {
   data?: NewUser;
@@ -13,13 +13,13 @@ export type InputErrorsType = {
 };
 
 export interface UnidentifiedUserContextType {
-  user: NewUser | undefined;
-  setUser: Dispatch<SetStateAction<NewUser | undefined>>;
+  user: AppUser | undefined;
+  setUser: Dispatch<SetStateAction<AppUser | undefined>>;
 }
 
 export interface CurrUserContextType {
-  user: NewUser;
-  setUser: Dispatch<SetStateAction<NewUser | undefined>>;
+  user: AppUser;
+  setUser: Dispatch<SetStateAction<AppUser | undefined>>;
 }
 
 export type JoinNavigationProps = {
@@ -27,4 +27,22 @@ export type JoinNavigationProps = {
     goBack: () => void;
     moveOn: () => void;
   };
+};
+
+export type MoreMenuType = {
+  title: string;
+  action: () => any | void;
+  theme?: "red" | "blue" | "green" | "base";
+};
+
+export type StatusDataType = {
+  title: string | undefined;
+  isSuccess: boolean;
+};
+
+export type ClientRect = {
+  width: number;
+  height: number;
+  top: number;
+  left: number;
 };

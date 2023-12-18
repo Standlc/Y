@@ -1,95 +1,38 @@
 import { FastifyPluginAsync } from "fastify";
+import { AppPost } from "../types";
+import { getPost } from "./reply";
 import { db } from "../database";
-import { AppPost, NewReply } from "../types";
 import { jsonArrayFrom } from "kysely/helpers/postgres";
-import { getThreadPostIds } from "./thread";
 
-export const getPost = async (postId: number) => {
-  const post = await db
-    .selectFrom("post")
-    .where("post.id", "=", postId)
-    .selectAll()
+export const getThreadPostIds = async (postId: number) => {
+  const thread = await db
+    .selectFrom("thread")
+    .where("thread.id", "=", postId)
+    .select("postIds")
     .executeTakeFirst();
 
-  return post;
+  return thread;
 };
 
-const replyRoutes: FastifyPluginAsync = async (app, options) => {
-  app.post<{ Body: NewReply }>(
-    "/",
-    { preHandler: app.verifyJwt },
-    async (req, res): Promise<AppPost> => {
-      try {
-        const targetPost = await getPost(req.body.replyTargetId);
-        if (!targetPost) {
-          return res.status(404).send("No Such Post");
-        }
-
-        const sourcePostId = targetPost.replySourceTargetId ?? targetPost.id;
-        const newReply = await db
-          .insertInto("post")
-          .values({
-            ...req.body,
-            authorId: req.user.id,
-            replySourceTargetId: sourcePostId,
-          })
-          .returningAll()
-          .executeTakeFirstOrThrow();
-
-        const user = await db
-          .selectFrom("user")
-          .where("user.id", "=", req.user.id)
-          .select(["profilePictureUrl", "user.username"])
-          .executeTakeFirstOrThrow();
-
-        const post: AppPost = {
-          ...newReply,
-          repliesCount: 0,
-          repliesUsersPP: [],
-          likesCount: 0,
-          isPostLikedByUser: 0,
-          isAuthorFollowedByUser: 0,
-          authorUsername: user.username,
-          authorPP: user.profilePictureUrl,
-        };
-
-        // CREATE THREAD
-        let targetThread = await getThreadPostIds(targetPost.id);
-        if (!targetThread) {
-          targetThread = {
-            postIds: [targetPost.id],
-          };
-        }
-
-        await db
-          .insertInto("thread")
-          .values({
-            id: newReply.id,
-            postIds: [...targetThread.postIds, targetPost.id],
-            authorId: req.user.id,
-          })
-          .execute();
-
-        return post;
-      } catch (error) {
-        console.log(error);
-        return res.status(500).send(error);
-      }
-    }
-  );
-
+const threadRoutes: FastifyPluginAsync = async (app, options) => {
   app.get<{ Params: { postid: number } }>(
     "/:postid",
     { preHandler: app.verifyJwt },
     async (req, res): Promise<AppPost[]> => {
       try {
-        if (!getPost(req.params.postid)) {
+        const reply = await getPost(req.params.postid);
+        if (!reply) {
           return res.status(404).send("No Such Post");
         }
 
-        const replies = await db
+        const targetThread = await getThreadPostIds(reply.id);
+        if (!targetThread) {
+          return [];
+        }
+
+        const posts = await db
           .selectFrom("post")
-          .where("post.replyTargetId", "=", req.params.postid)
+          .where("post.id", "in", targetThread.postIds)
           .innerJoin("user", "user.id", "post.authorId")
           .select([
             "user.profilePictureUrl as authorPP",
@@ -149,10 +92,10 @@ const replyRoutes: FastifyPluginAsync = async (app, options) => {
               .as("isAuthorFollowedByUser")
           )
           .distinctOn(["post.id", "post.createdAt"])
-          .orderBy("post.createdAt desc")
+          .orderBy("post.createdAt asc")
           .execute();
 
-        return replies;
+        return posts;
       } catch (error) {
         console.log(error);
         return res.status(500).send(error);
@@ -161,4 +104,4 @@ const replyRoutes: FastifyPluginAsync = async (app, options) => {
   );
 };
 
-export default replyRoutes;
+export default threadRoutes;

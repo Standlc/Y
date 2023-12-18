@@ -18,9 +18,10 @@ declare module "fastify" {
 
 declare module "@fastify/jwt" {
   interface FastifyJWT {
-    payload: { id: number };
+    payload: { id: number; username: string };
     user: {
       id: number;
+      username: string;
     };
   }
 }
@@ -38,7 +39,7 @@ const jwtDecorations: FastifyPluginAsync = async (app, options) => {
     "signAndSetCookie",
     (user: Selectable<User>, res: FastifyReply) => {
       const accessToken = app.jwt.sign(
-        { id: user.id },
+        { id: user.id, username: user.username },
         { expiresIn: "2 days" }
       );
       res.setCookie("token", accessToken, {

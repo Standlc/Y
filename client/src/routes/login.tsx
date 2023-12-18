@@ -65,6 +65,7 @@ export default function Login() {
 
   useEffect(() => {
     if (actionData?.data) {
+      // @ts-expect-error
       setUser(actionData?.data);
       navigate("/");
     }
@@ -101,9 +102,9 @@ export default function Login() {
         </Button>
       </div>
 
-      <div className="flex justify-end gap-x-3 text-center text-sm">
+      <div className="flex items-center justify-end gap-x-3 text-center text-sm">
         <span className="opacity-50">Don't have an account?</span>
-        <Link className="group flex text-white" to={"/join"}>
+        <Link className="group flex items-center text-white" to={"/join"}>
           <span className="mr-2">Join</span>
           <Icon IconRef={ChevronRight} size="sm" />
         </Link>

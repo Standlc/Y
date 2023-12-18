@@ -4,7 +4,7 @@ import { ImgFileContext, UnisignedUserContext } from "./join";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useOutletContext } from "react-router";
-import { NewUser } from "~/srcs/types";
+import { AppUser, NewUser } from "~/srcs/types";
 
 export default function SubmitNewUser({
   navigation,
@@ -17,7 +17,7 @@ export default function SubmitNewUser({
   const { unsignedUser } = useContext(UnisignedUserContext);
   const { imgFile } = useContext(ImgFileContext);
   const { setUser } = useOutletContext<{
-    setUser: React.Dispatch<React.SetStateAction<NewUser | undefined>>;
+    setUser: React.Dispatch<React.SetStateAction<AppUser | undefined>>;
   }>();
 
   const submit = async () => {
@@ -25,7 +25,7 @@ export default function SubmitNewUser({
       const filename = await uploadImgFile();
       unsignedUser.profilePictureUrl = filename;
     }
-    const res = await axios.post<NewUser>("/api/auth/register", unsignedUser);
+    const res = await axios.post<AppUser>("/api/auth/register", unsignedUser);
     setUser(res.data);
     return null;
   };
@@ -51,7 +51,7 @@ export default function SubmitNewUser({
 
   return (
     <div className="flex flex-col justify-center gap-5">
-      <div className="bg-bg_secondary border-border_s flex items-center rounded-lg border px-3 py-3 text-base">
+      <div className="flex items-center rounded-lg border border-border_s bg-bg_secondary px-3 py-3 text-base">
         <Avatar
           imgUrl={imgFile ? URL.createObjectURL(imgFile) : null}
           size="sm"

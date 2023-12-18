@@ -20,20 +20,19 @@ export interface Like {
 
 export interface Post {
   authorId: number;
-  caption: string;
+  caption: string | null;
   createdAt: Generated<Timestamp>;
   id: Generated<number>;
   photoUrl: string | null;
+  replySourceTargetId: number | null;
+  replyTargetId: number | null;
   updatedAt: Generated<Timestamp>;
 }
 
-export interface Reply {
+export interface Thread {
   authorId: number;
-  content: string | null;
-  createdAt: Generated<Timestamp>;
-  id: Generated<number>;
-  postId: number;
-  updatedAt: Generated<Timestamp>;
+  id: number;
+  postIds: number[];
 }
 
 export interface User {
@@ -49,6 +48,6 @@ export interface DB {
   following: Following;
   like: Like;
   post: Post;
-  reply: Reply;
+  thread: Thread;
   user: User;
 }

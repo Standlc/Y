@@ -99,15 +99,15 @@ const InfiniteSlotMachine = ({ state }: { state: number }) => {
   }, [state, slot1, slot2]);
 
   return (
-    <div className={`ml-2 flex h-full flex-col overflow-hidden`}>
+    <div className={`flex h-full flex-col overflow-hidden`}>
       <div
         ref={wrapperRef}
-        className={`relative flex h-[100%] flex-none flex-col items-center opacity-60 [transition:transform_0.2s,width_0.2s]`}
+        className={`relative flex h-[100%] flex-none flex-col items-center opacity-90 [transition:transform_0.2s,width_0.2s]`}
       >
-        <span className="font-mono text-xs opacity-0">{stateCopy}</span>
+        <span className="font-mono text-[13px] opacity-0">{stateCopy}</span>
         <span
           ref={slot1}
-          className={`absolute flex h-full select-none items-center justify-center text-xs`}
+          className={`absolute flex h-full select-none items-center justify-center text-[13px]`}
         >
           {slot1Value}
         </span>
@@ -115,7 +115,7 @@ const InfiniteSlotMachine = ({ state }: { state: number }) => {
         <span
           style={{ top: "-100%" }}
           ref={slot2}
-          className={`absolute flex h-full select-none items-center justify-center text-xs`}
+          className={`absolute flex h-full select-none items-center justify-center text-[13px]`}
         >
           {slot2Value}
         </span>

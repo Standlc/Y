@@ -8,7 +8,6 @@ import {
   FileMigrationProvider,
 } from "kysely";
 import dotenv from "dotenv";
-import { up } from "./migrations/3";
 
 dotenv.config();
 

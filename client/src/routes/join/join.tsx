@@ -65,9 +65,9 @@ export default function Join() {
 
           <CurrForm.component navigation={{ goBack, moveOn }} />
 
-          <div className="flex justify-end gap-x-3 text-center text-sm">
+          <div className="flex items-center justify-end gap-x-3 text-center text-sm">
             <span className="opacity-50">Already got an account?</span>
-            <Link className="group flex text-white" to={"/login"}>
+            <Link className="group flex items-center text-white" to={"/login"}>
               <span className="mr-2">Login</span>
               <Icon IconRef={ChevronRight} size="sm" />
             </Link>
