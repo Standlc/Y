@@ -60,6 +60,9 @@ export default function Post({
   });
 
   const deleteQuery = useMakeRequest(["delete", post.authorId], async () => {
+    if (post.photoUrl) {
+      await axios.delete(`/api/public/${post.photoUrl}`);
+    }
     const res = await axios.delete(`/api/posts/${post.id}`);
     setStatusData({
       title: "Post was deleted",
@@ -68,33 +71,6 @@ export default function Post({
     setIsDeleted(true);
     return res.data;
   });
-
-  useEffect(() => {
-    if (unfollowQuery.isError) {
-      setStatusData({
-        title: "User could not be unfollowed",
-        isSuccess: false,
-      });
-    }
-  }, [unfollowQuery.isError]);
-
-  useEffect(() => {
-    if (followQuery.isError) {
-      setStatusData({
-        title: "User could not be followed",
-        isSuccess: false,
-      });
-    }
-  }, [followQuery.isError]);
-
-  useEffect(() => {
-    if (deleteQuery.isError) {
-      setStatusData({
-        title: "Post could not be deleted",
-        isSuccess: false,
-      });
-    }
-  }, [deleteQuery.isError]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setMouseDownPos({
@@ -147,7 +123,6 @@ export default function Post({
               title: "Go to profile",
               action: () => navigate(`/${post.authorUsername}`),
             },
-            { title: "Message", action: () => {} },
           ]}
         />
       </div>
@@ -317,26 +292,6 @@ const Interactions = ({
 
   return (
     <div className="flex w-full flex-1 flex-col gap-2">
-      {/* {!isPostPage && post.repliesCount ? (
-        <div className="group relative flex cursor-pointer select-none gap-2 pl-1">
-          <span className="text-[14px] opacity-80 [transition:opacity_0.2s] group-hover:opacity-100">
-            ⤷
-          </span>
-          <span className="text-[14px] opacity-80 [transition:opacity_0.2s] group-hover:opacity-100">
-            View replies
-          </span>
-          <div className="flex items-center">
-            {post.repliesUsersPP?.map((pp, i) => {
-              return (
-                <div key={i} className="-mr-2 rounded-full">
-                  <Avatar size="xs" imgUrl={publicUri(pp.value)} />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      ) : null} */}
-
       <div className="flex items-center gap-7">
         <LikeInfos post={post} />
         <PostInteraction
@@ -370,7 +325,7 @@ export const PostInteraction = ({
   variant?: "blue" | "green" | "base" | "pink";
 }) => {
   return (
-    <div className="flex h-full items-center gap-1">
+    <div className="flex h-full items-center gap-1 text-sm text-white">
       <div className={`group cursor-pointer`} onClick={onClick}>
         <Icon style={style} variant={variant} IconRef={IconRef} size="sm" />
       </div>
@@ -378,30 +333,3 @@ export const PostInteraction = ({
     </div>
   );
 };
-
-// useEffect(() => {
-//   if (!wrapperRef.current) return;
-
-//   requestAnimationFrame(
-//     wrapperRef.current,
-//     (element) => {
-//       const heightBefore = element.getBoundingClientRect().height;
-//       element.style.height = "auto";
-//       return heightBefore;
-//     },
-//     (element, heightBefore) => {
-//       requestAnimationFrame(
-//         element,
-//         () => {
-//           const heightAfter = element.getBoundingClientRect().height;
-//           element.style.height = `${heightBefore}px`;
-//           return heightAfter;
-//         },
-
-//         (element, heightAfter) => {
-//           element.style.height = `${heightAfter}px`;
-//         },
-//       );
-//     },
-//   );
-// }, [wrapperRef, showReplyInput, reply]);

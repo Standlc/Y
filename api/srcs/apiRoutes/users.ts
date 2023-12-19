@@ -127,6 +127,7 @@ const usersRoutes: FastifyPluginAsync = async (app, options) => {
             eb
               .selectFrom("post")
               .whereRef("authorId", "=", "user.id")
+              .where("post.replyTargetId", "is", null)
               .select((eb) => eb.fn.countAll<number>().as("postsCount"))
               .as("postsCount")
           )

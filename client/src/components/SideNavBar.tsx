@@ -50,18 +50,17 @@ export default function SideNavBar({ user }: { user: AppUser }) {
             />
           </NavLink>
 
-          <NavItem
+          {/* <NavItem
             title="Notifications"
             icon={<FavoriteBorder sx={{ fontSize: 27 }} />}
             onClick={() => {}}
-          />
+          /> */}
 
           <NavItem
             title="Search"
             icon={<SearchIcon size={23} />}
             onClick={() => setShowSearch(true)}
           />
-
         </div>
 
         {/* <div className="group flex cursor-pointer select-none items-center rounded-xl bg-white bg-opacity-[%] px-1 py-3 [transition:box-shadow_0.2s,border_0.2s,background_0.2s]">
@@ -164,7 +163,7 @@ const CreateButton = () => {
   return (
     <div className="relative h-[60px] w-[60px] cursor-pointer">
       <div
-        className="flex items-center justify-center h-[60px] w-[60px] bg-white rounded-lg text-black"
+        className="flex h-[60px] w-[60px] items-center justify-center rounded-lg bg-white text-black"
         style={{
           zIndex: 10,
           transition: `opacity 0.5s ${timingFunction}, height 0.5s ${timingFunction}, width 0.5s ${timingFunction}, left 0.5s ${timingFunction}, top 0.5s ${timingFunction}, visibility 0.5s ${timingFunction}, transform 0.2s ${timingFunction}`,
@@ -183,8 +182,8 @@ const CreateButton = () => {
           })
         }
         id="post-btn"
-        >
-        <AddRoundedIcon sx={{fontSize:30}}/>
+      >
+        <AddRoundedIcon sx={{ fontSize: 30 }} />
       </div>
     </div>
   );

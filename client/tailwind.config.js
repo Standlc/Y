@@ -73,8 +73,8 @@ export default {
       boxShadow: {
         shadow: "0px -1px 2px 0px rgba(255,255,255,0)",
         shadow_focus:
-          "0px 3px 25px 5px rgba(59,130,246,0.2), 0px 0px 0px 2px rgba(59,130,246,0.3)",
-        shadow_hover: "0px 3px 20px 5px rgba(59,130,246,0.2)",
+          "0px 3px 25px 5px rgba(255,255,255,0.2), 0px 0px 0px 2px rgba(255,255,255,0.3)",
+        shadow_hover: "0px 3px 20px rgba(255,255,255,0.2)",
       },
       fontSize: {
         md: "16px",
@@ -91,7 +91,7 @@ export default {
         bg_secondary: "rgb(25,30,30)",
         bg_secondary_trans: "rgb(255,255,255,0.1)",
 
-        border_s: "rgb(255,255,255,0.08)",
+        border_s: "rgb(255,255,255,0.1)",
         border_p: "rgb(255,255,255,0.2)",
 
         // purple: "#7e5bef",

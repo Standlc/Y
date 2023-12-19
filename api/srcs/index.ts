@@ -63,13 +63,29 @@ app.post("/api/upload", { preHandler: app.verifyJwt }, async (req, res) => {
 });
 
 app.get<{ Params: { imgurl: string } }>(
-  "/public/:imgurl",
+  "/api/public/:imgurl",
   { preHandler: app.verifyJwt },
   (req, res) => {
     try {
       return res.sendFile(req.params.imgurl);
     } catch (error) {
-      console.log("ERROR");
+      console.log(error);
+      return error;
+    }
+  }
+);
+
+app.delete<{ Params: { imgurl: string } }>(
+  "/api/public/:imgurl",
+  { preHandler: app.verifyJwt },
+  (req, res) => {
+    try {
+      console.log(UPLOAD_PATH + req.params.imgurl);
+      fs.unlink(UPLOAD_PATH + req.params.imgurl, (err) => {
+        if (err) throw err;
+        return res.status(200).send("File Was Deleted");
+      });
+    } catch (error) {
       console.log(error);
       return error;
     }

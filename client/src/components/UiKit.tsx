@@ -116,18 +116,28 @@ const bgVariants = {
     color: "text-black",
     hover:
       "hover:-translate-y-[1px] hover:scale-[100%] hover:shadow-shadow_hover active:scale-[97%]",
+    outline: "",
   },
   secondary: {
     bg: "bg-secondary",
     color: "text-white",
     hover:
       "hover:-translate-y-[1px] hover:scale-[100%] hover:shadow-shadow_hover active:scale-[97%]",
+    outline: "",
   },
   monochrome: {
     bg: "bg-white bg-opacity-10",
     color: "text-white",
     hover:
       "hover:-translate-y-[1px] hover:scale-[100%] hover:bg-opacity-20 hover:shadow-shadow_hover active:scale-[97%]",
+    outline: "",
+  },
+  outlined: {
+    bg: "bg-transparent",
+    color: "text-white",
+    hover:
+      "hover:-translate-y-[1px] hover:scale-[100%] hover:shadow-shadow_hover active:scale-[97%]",
+    outline: "outline outline-1 outline-[rgba(255,255,255,0.5)]",
   },
 };
 
@@ -139,7 +149,7 @@ export const Button = (
     size?: "sm" | "lg";
     isLoading?: boolean;
     active?: boolean;
-    variant?: "primary" | "secondary" | "monochrome";
+    variant?: "primary" | "secondary" | "monochrome" | "outlined";
   },
 ) => {
   const {
@@ -163,7 +173,7 @@ export const Button = (
       }}
       className={`relative flex w-auto select-none flex-col items-center justify-center overflow-hidden rounded-xl text-lg font-extrabold text-black shadow-shadow duration-300 ease-in-out [transition:color_0.2s,transform_0.2s,box-shadow_0.2s,background-color_0.2s] ${
         isActive ? styles.hover : "opacity-50"
-      } ${styles.bg} ${styles.color} px-5 py-2`}
+      } ${styles.bg} ${styles.color} ${styles.outline} px-5 py-2`}
       disabled={isLoading}
     >
       {children}
@@ -332,8 +342,8 @@ const avatarSizes = {
   sm: 30,
   md: 40,
   lg: 55,
-  xl: 60,
-  "2xl": 150,
+  xl: 100,
+  "2xl": 160,
 };
 
 export const Avatar = ({

@@ -23,7 +23,7 @@ export const timingFunction = "cubic-bezier(0.7, -0.0, 0, 1)";
 
 export const publicUri = (resource: string | null | undefined) => {
   if (resource) {
-    return `/public/${resource}`;
+    return `/api/public/${resource}`;
   }
   return null;
 };

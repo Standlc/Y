@@ -20,52 +20,52 @@ export default function ({ user }: { user: AppUser }) {
   const modalRef = useRef<HTMLDivElement>(null);
 
   const uploadImage = async () => {
-      if (!file) {
-        return null;
-      }
+    if (!file) {
+      return null;
+    }
 
-      const data = new FormData();
-      data.append("file", file);
-      try {
-        const res = await axios.post<string>("/api/upload", data);
-        return res.data;
-      } catch (error) {
-        console.log(error);
-      }
+    const data = new FormData();
+    data.append("file", file);
+    try {
+      const res = await axios.post<string>("/api/upload", data);
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const postNewPost = async () => {
-      if (newPost.caption == "" && !file) {
-        return null;
+    if (newPost.caption == "" && !file) {
+      return null;
+    }
+
+    if (file) {
+      const res = await uploadImage();
+      newPost.photoUrl = res;
+    }
+
+    try {
+      let res;
+      if (modal.targetId != undefined) {
+        const newReply: NewReply = {
+          ...newPost,
+          replyTargetId: modal.targetId,
+        };
+        res = await axios.post<AppPost>(`/api/reply`, newReply);
+      } else {
+        res = await axios.post<AppPost>("/api/posts", newPost);
       }
 
-      if (file) {
-        const res = await uploadImage();
-        newPost.photoUrl = res;
-      }
-
-      try {        
-        let res;
-        if (modal.targetId != undefined) {
-          const newReply: NewReply = {
-            ...newPost,
-            replyTargetId: modal.targetId,
-          };
-          res = await axios.post<AppPost>(`/api/reply`, newReply);
-        } else {
-          res = await axios.post<AppPost>("/api/posts", newPost);
-        }
-
-        modal.finish(res.data);
-        modal.hide();
-      } catch (error) {
-        console.log(error);
-        setStatusData({
-          title: "An error occured",
-          isSuccess: false,
-        });
-      }
-    };
+      modal.finish(res.data);
+      modal.hide();
+    } catch (error) {
+      console.log(error);
+      setStatusData({
+        title: "An error occured",
+        isSuccess: false,
+      });
+    }
+  };
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -114,7 +114,7 @@ export default function ({ user }: { user: AppUser }) {
           </div>
 
           <div className="flex w-full flex-col gap-3">
-            <div className="flex w-full items-center py-3">
+            <div className="flex w-full items-center py-[10px]">
               <TextArea
                 placeholder="What's going on?!"
                 value={newPost.caption ?? ""}
@@ -126,7 +126,7 @@ export default function ({ user }: { user: AppUser }) {
             <ImageViewer file={file} setFile={setFile} />
           </div>
 
-          <div className="sticky bottom-4 flex items-center gap-3 self-end p-[2px]">
+          <div className="sticky bottom-4 flex items-center gap-3 self-end p-[0px]">
             <ImageSelector setFile={setFile} />
             <Button
               isLoading={false}
