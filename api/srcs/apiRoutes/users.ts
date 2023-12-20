@@ -94,8 +94,6 @@ const usersRoutes: FastifyPluginAsync = async (app, options) => {
           .orderBy("post.createdAt desc")
           .execute();
 
-        console.log(posts);
-
         // SELECT LIKES
         // .select((eb) =>
         //   jsonArrayFrom(
